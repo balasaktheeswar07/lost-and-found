@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost & Found with AI Chatbot</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background Music -->
+  <audio id="pleasant-bgm" preload="auto" loop>
+    <source src="sounds/pleasant.mp3" type="audio/mpeg">
+    <source src="sounds/pleasant.ogg" type="audio/ogg">
+  </audio>
+
+  <audio id="sad-bgm" preload="auto" loop>
+    <source src="sounds/sad.mp3" type="audio/mpeg">
+    <source src="sounds/sad.ogg" type="audio/ogg">
+  </audio>
+
+  <!-- Music Controls -->
+  <div id="music-controls" class="music-controls hidden">
+    <button id="play-music" class="music-btn">🎵 Play Music</button>
+    <button id="pause-music" class="music-btn hidden">⏸️ Pause</button>
+    <span id="current-music-type" class="music-type"></span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-content">
+      <h1 class="logo">📍 Lost & Found</h1>
+      <nav class="nav-links">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#report" class="nav-link">Report Item</a>
+        <a href="#items" class="nav-link">Browse Items</a>
+        <a href="#about" class="nav-link">About</a>
+      </nav>
+      <button class="menu-toggle">☰</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h2>Find What You Lost, Return What You Found</h2>
+      <p>A community-driven platform helping you recover lost belongings and reunite found items with their owners.</p>
+      <button class="cta-button" id="report-btn">Start Reporting</button>
+    </div>
+  </section>
+
+  <!-- Report Form Modal -->
+  <div id="report-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <h2>Report an Item</h2>
+      <form id="report-form">
+        <div class="form-group">
+          <label for="item-type">Type:</label>
+          <select id="item-type" required>
+            <option value="">Select Type...</option>
+            <option value="lost">Lost Item</option>
+            <option value="found">Found Item</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="item-category">Category:</label>
+          <select id="item-category" required>
+            <option value="">Select Category...</option>
+            <option value="wallet">Wallet</option>
+            <option value="phone">Phone</option>
+            <option value="keys">Keys</option>
+            <option value="id">ID/Document</option>
+            <option value="bag">Bag</option>
+            <option value="clothing">Clothing</option>
+            <option value="accessory">Accessory</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="item-name">Item Name:</label>
+          <input type="text" id="item-name" placeholder="E.g., Black Leather Wallet" required />
+        </div>
+
+        <div class="form-group">
+          <label for="item-description">Description:</label>
+          <textarea id="item-description" placeholder="Provide detailed description..." rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="item-location">Location:</label>
+          <input type="text" id="item-location" placeholder="E.g., Library 3rd Floor" required />
+        </div>
+
+        <div class="form-group">
+          <label for="item-date">Date:</label>
+          <input type="date" id="item-date" required />
+        </div>
+
+        <div class="form-group">
+          <label for="item-contact">Your Contact:</label>
+          <input type="text" id="item-contact" placeholder="Phone or Email" required />
+        </div>
+
+        <button type="submit" class="submit-btn">Report Item</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <section class="search-section" id="items">
+    <div class="search-container">
+      <input
+        type="text"
+        id="search-input"
+        class="search-bar"
+        placeholder="🔍 Search items by name, location..."
+      />
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="lost">Lost</button>
+        <button class="filter-btn" data-filter="found">Found</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Items Display Section -->
+  <section class="items-section">
+    <h2>Available Items</h2>
+    <div id="items-container" class="cards">
+      <!-- Items will be dynamically populated here -->
+    </div>
+    <div id="no-items" class="no-items">
+      <p>No items found. Be the first to report!</p>
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <div id="notification" class="notification hidden"></div>
+
+  <!-- Chatbot Floating Button -->
+  <button id="chat-toggle" class="chat-toggle">💬</button>
+
+  <!-- Chatbot Box -->
+  <div id="chat-container" class="chat-container hidden">
+    <div class="chat-header">
+      <h3>🤖 AI Assistant</h3>
+      <button id="close-chat" class="close-btn">✖</button>
+    </div>
+
+    <div id="chat-body" class="chat-body">
+      <div class="bot-message">Hi there! 👋 I'm your Lost & Found assistant. How can I help you today? You can ask me to:
+        <ul style="margin-top: 8px; margin-left: 20px;">
+          <li>Help you report an item</li>
+          <li>Search for lost/found items</li>
+          <li>Get tips on recovery</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input
+        type="text"
+        id="user-input"
+        class="chat-input"
+        placeholder="Type your message..."
+      />
+      <button id="send-btn" class="send-btn">Send</button>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <section class="about-section" id="about">
+    <h2>About This Platform</h2>
+    <div class="about-content">
+      <div class="about-card">
+        <h3>🎯 Our Mission</h3>
+        <p>We help the community recover lost items and reunite found belongings with their rightful owners.</p>
+      </div>
+      <div class="about-card">
+        <h3>🔐 Secure & Safe</h3>
+        <p>Your personal information is protected. Contact details are only shared when both parties agree.</p>
+      </div>
+      <div class="about-card">
+        <h3>💙 Community Driven</h3>
+        <p>Every report helps someone. Join us in making our community more helpful and connected.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 Lost & Found Platform. Made with ❤️ for the community.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

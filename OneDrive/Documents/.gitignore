@@ -1,0 +1,42 @@
+# Ignore all files by default
+*
+
+# But allow specific website files
+!index.html
+!style.css
+!script.js
+!sounds/
+!sounds/*.mp3
+!sounds/*.ogg
+!sounds/README.md
+!sounds/*_placeholder.txt
+
+# Ignore everything else (executables, other projects, etc.)
+*.exe
+*.cpp
+*.pptx
+*.docx
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pdf
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.bak
+*.tmp
+*.log
+*.cache
+node_modules/
+.vscode/
+.arduinoIDE/
+.codex/
+.cursor/
+.dbclient/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Thumbs.db

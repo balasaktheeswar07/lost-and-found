@@ -3,160 +3,181 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lost & Found with AI Chatbot</title>
+  <meta name="description" content="Lost & Found platform - Find what you lost, return what you found. Community-driven platform with AI chatbot assistance." />
+  <meta name="keywords" content="lost and found, lost items, found items, community, reunite belongings" />
+  <title>Lost & Found - Find What You Lost, Return What You Found</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/></svg>" />
 </head>
 <body>
 
-  <!-- Background Music -->
-  <audio id="pleasant-bgm" preload="auto" loop>
-    <source src="sounds/pleasant.mp3" type="audio/mpeg">
-    <source src="sounds/pleasant.ogg" type="audio/ogg">
-  </audio>
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="sr-only">Skip to main content</a>
 
-  <audio id="sad-bgm" preload="auto" loop>
-    <source src="sounds/sad.mp3" type="audio/mpeg">
-    <source src="sounds/sad.ogg" type="audio/ogg">
-  </audio>
-
-  <!-- Music Controls -->
-  <div id="music-controls" class="music-controls hidden">
-    <button id="play-music" class="music-btn">🎵 Play Music</button>
-    <button id="pause-music" class="music-btn hidden">⏸️ Pause</button>
-    <span id="current-music-type" class="music-type"></span>
-  </div>
-
-  <!-- Navbar -->
-  <header class="navbar">
+  <!-- Navigation -->
+  <header class="navbar" role="banner">
     <div class="navbar-content">
-      <h1 class="logo">📍 Lost & Found</h1>
-      <nav class="nav-links">
+      <h1 class="logo" tabindex="0">📍 Lost & Found</h1>
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
         <a href="#home" class="nav-link">Home</a>
         <a href="#report" class="nav-link">Report Item</a>
         <a href="#items" class="nav-link">Browse Items</a>
         <a href="#about" class="nav-link">About</a>
       </nav>
-      <button class="menu-toggle">☰</button>
+      <button class="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero" id="home">
-    <div class="hero-content">
-      <h2>Find What You Lost, Return What You Found</h2>
-      <p>A community-driven platform helping you recover lost belongings and reunite found items with their owners.</p>
-      <button class="cta-button" id="report-btn">Start Reporting</button>
-    </div>
-  </section>
+  <!-- Main Content -->
+  <main id="main-content">
 
-  <!-- Report Form Modal -->
-  <div id="report-modal" class="modal hidden">
-    <div class="modal-content">
-      <button class="close-modal">&times;</button>
-      <h2>Report an Item</h2>
-      <form id="report-form">
-        <div class="form-group">
-          <label for="item-type">Type:</label>
-          <select id="item-type" required>
-            <option value="">Select Type...</option>
-            <option value="lost">Lost Item</option>
-            <option value="found">Found Item</option>
-          </select>
-        </div>
+    <!-- Hero Section -->
+    <section class="hero" id="home" role="banner">
+      <div class="hero-content">
+        <h2>Find What You Lost,<br>Return What You Found</h2>
+        <p>A community-driven platform helping you recover lost belongings and reunite found items with their rightful owners.</p>
+        <button class="cta-button" id="report-btn" aria-label="Start reporting an item">
+          Start Reporting
+          <span class="sr-only">Click to open the item reporting form</span>
+        </button>
+      </div>
+    </section>
 
-        <div class="form-group">
-          <label for="item-category">Category:</label>
-          <select id="item-category" required>
-            <option value="">Select Category...</option>
-            <option value="wallet">Wallet</option>
-            <option value="phone">Phone</option>
-            <option value="keys">Keys</option>
-            <option value="id">ID/Document</option>
-            <option value="bag">Bag</option>
-            <option value="clothing">Clothing</option>
-            <option value="accessory">Accessory</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
+    <!-- Report Form Modal -->
+    <div id="report-modal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+      <div class="modal-content">
+        <button class="close-modal" aria-label="Close modal">&times;</button>
+        <h2 id="modal-title">Report an Item</h2>
+        <form id="report-form" role="form" aria-label="Item reporting form">
+          <div class="form-group">
+            <label for="item-type">Type <span class="required" aria-label="required">*</span></label>
+            <select id="item-type" required aria-describedby="type-help">
+              <option value="">Select Type...</option>
+              <option value="lost">Lost Item</option>
+              <option value="found">Found Item</option>
+            </select>
+            <small id="type-help" class="form-help">Choose whether you lost or found this item</small>
+          </div>
 
-        <div class="form-group">
-          <label for="item-name">Item Name:</label>
-          <input type="text" id="item-name" placeholder="E.g., Black Leather Wallet" required />
-        </div>
+          <div class="form-group">
+            <label for="item-category">Category <span class="required" aria-label="required">*</span></label>
+            <select id="item-category" required aria-describedby="category-help">
+              <option value="">Select Category...</option>
+              <option value="wallet">💳 Wallet</option>
+              <option value="phone">📱 Phone</option>
+              <option value="keys">🗝️ Keys</option>
+              <option value="id">🆔 ID/Document</option>
+              <option value="bag">👜 Bag</option>
+              <option value="clothing">👕 Clothing</option>
+              <option value="accessory">💍 Accessory</option>
+              <option value="electronics">💻 Electronics</option>
+              <option value="books">📚 Books</option>
+              <option value="other">❓ Other</option>
+            </select>
+            <small id="category-help" class="form-help">Select the most appropriate category for your item</small>
+          </div>
 
-        <div class="form-group">
-          <label for="item-description">Description:</label>
-          <textarea id="item-description" placeholder="Provide detailed description..." rows="4"></textarea>
-        </div>
+          <div class="form-group">
+            <label for="item-name">Item Name <span class="required" aria-label="required">*</span></label>
+            <input type="text" id="item-name" placeholder="E.g., Black Leather Wallet with RFID" required aria-describedby="name-help" />
+            <small id="name-help" class="form-help">Provide a clear, descriptive name for the item</small>
+          </div>
 
-        <div class="form-group">
-          <label for="item-location">Location:</label>
-          <input type="text" id="item-location" placeholder="E.g., Library 3rd Floor" required />
-        </div>
+          <div class="form-group">
+            <label for="item-description">Description</label>
+            <textarea id="item-description" placeholder="Provide detailed description, including unique features, brand, color, etc." rows="4" aria-describedby="description-help"></textarea>
+            <small id="description-help" class="form-help">Include any distinctive features that would help identify the item</small>
+          </div>
 
-        <div class="form-group">
-          <label for="item-date">Date:</label>
-          <input type="date" id="item-date" required />
-        </div>
+          <div class="form-group">
+            <label for="item-location">Location <span class="required" aria-label="required">*</span></label>
+            <input type="text" id="item-location" placeholder="E.g., Library 3rd Floor, Room 305" required aria-describedby="location-help" />
+            <small id="location-help" class="form-help">Where did you lose/find this item?</small>
+          </div>
 
-        <div class="form-group">
-          <label for="item-contact">Your Contact:</label>
-          <input type="text" id="item-contact" placeholder="Phone or Email" required />
-        </div>
+          <div class="form-group">
+            <label for="item-date">Date <span class="required" aria-label="required">*</span></label>
+            <input type="date" id="item-date" required aria-describedby="date-help" />
+            <small id="date-help" class="form-help">When did you lose/find this item?</small>
+          </div>
 
-        <button type="submit" class="submit-btn">Report Item</button>
-      </form>
-    </div>
-  </div>
+          <div class="form-group">
+            <label for="item-contact">Contact Information <span class="required" aria-label="required">*</span></label>
+            <input type="text" id="item-contact" placeholder="Phone: (555) 123-4567 or Email: your@email.com" required aria-describedby="contact-help" />
+            <small id="contact-help" class="form-help">How can people reach you about this item?</small>
+          </div>
 
-  <!-- Search and Filter Section -->
-  <section class="search-section" id="items">
-    <div class="search-container">
-      <input
-        type="text"
-        id="search-input"
-        class="search-bar"
-        placeholder="🔍 Search items by name, location..."
-      />
-      <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="lost">Lost</button>
-        <button class="filter-btn" data-filter="found">Found</button>
+          <button type="submit" class="submit-btn">
+            <span class="btn-text">Report Item</span>
+            <span class="btn-loading loading hidden"></span>
+          </button>
+        </form>
       </div>
     </div>
-  </section>
 
-  <!-- Items Display Section -->
-  <section class="items-section">
-    <h2>Available Items</h2>
-    <div id="items-container" class="cards">
-      <!-- Items will be dynamically populated here -->
-    </div>
-    <div id="no-items" class="no-items">
-      <p>No items found. Be the first to report!</p>
-    </div>
-  </section>
+    <!-- Search and Filter Section -->
+    <section class="search-section" id="items" aria-labelledby="search-title">
+      <div class="search-container">
+        <h2 id="search-title" class="sr-only">Search and Browse Items</h2>
+        <input
+          type="text"
+          id="search-input"
+          class="search-bar"
+          placeholder="🔍 Search items by name, location, or description..."
+          aria-label="Search items"
+        />
+        <div class="filter-buttons" role="group" aria-label="Filter items">
+          <button class="filter-btn active" data-filter="all" aria-pressed="true">All Items</button>
+          <button class="filter-btn" data-filter="lost" aria-pressed="false">Lost Items</button>
+          <button class="filter-btn" data-filter="found" aria-pressed="false">Found Items</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Items Display Section -->
+    <section class="items-section" aria-labelledby="items-title">
+      <h2 id="items-title">Available Items</h2>
+      <div id="items-container" class="cards" role="region" aria-label="Items list">
+        <!-- Items will be dynamically populated here -->
+      </div>
+      <div id="no-items" class="no-items" role="status" aria-live="polite">
+        <p>No items found matching your criteria. Be the first to report!</p>
+      </div>
+    </section>
+
+  </main>
 
   <!-- Notifications -->
-  <div id="notification" class="notification hidden"></div>
+  <div id="notification" class="notification hidden" role="alert" aria-live="assertive"></div>
 
-  <!-- Chatbot Floating Button -->
-  <button id="chat-toggle" class="chat-toggle">💬</button>
+  <!-- Chatbot -->
+  <button id="chat-toggle" class="chat-toggle bounce" aria-label="Open AI assistant chat">
+    <span class="chat-icon">💬</span>
+    <span class="sr-only">AI Assistant Chat</span>
+  </button>
 
-  <!-- Chatbot Box -->
-  <div id="chat-container" class="chat-container hidden">
+  <div id="chat-container" class="chat-container hidden" role="dialog" aria-labelledby="chat-title" aria-modal="true">
     <div class="chat-header">
-      <h3>🤖 AI Assistant</h3>
-      <button id="close-chat" class="close-btn">✖</button>
+      <h3 id="chat-title">🤖 AI Assistant</h3>
+      <button id="close-chat" class="close-btn" aria-label="Close chat">&times;</button>
     </div>
 
-    <div id="chat-body" class="chat-body">
-      <div class="bot-message">Hi there! 👋 I'm your Lost & Found assistant. How can I help you today? You can ask me to:
-        <ul style="margin-top: 8px; margin-left: 20px;">
-          <li>Help you report an item</li>
-          <li>Search for lost/found items</li>
-          <li>Get tips on recovery</li>
-        </ul>
+    <div id="chat-body" class="chat-body" role="log" aria-label="Chat messages" aria-live="polite">
+      <div class="bot-message welcome-message">
+        <div class="message-content">
+          <p>👋 <strong>Hello! I'm your Lost & Found assistant.</strong></p>
+          <p>I can help you with:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+            <li>📝 Reporting lost or found items</li>
+            <li>🔍 Searching for items</li>
+            <li>📋 Getting tips on item recovery</li>
+            <li>ℹ️ Answering questions about the platform</li>
+          </ul>
+          <p><em>What would you like to know?</em></p>
+        </div>
       </div>
     </div>
 
@@ -166,34 +187,57 @@
         id="user-input"
         class="chat-input"
         placeholder="Type your message..."
+        aria-label="Type your message to the AI assistant"
+        autocomplete="off"
       />
-      <button id="send-btn" class="send-btn">Send</button>
+      <button id="send-btn" class="send-btn" aria-label="Send message">
+        <span class="send-text">Send</span>
+        <span class="send-icon">📤</span>
+      </button>
     </div>
   </div>
 
   <!-- About Section -->
-  <section class="about-section" id="about">
-    <h2>About This Platform</h2>
+  <section class="about-section" id="about" aria-labelledby="about-title">
+    <h2 id="about-title">About This Platform</h2>
     <div class="about-content">
       <div class="about-card">
-        <h3>🎯 Our Mission</h3>
-        <p>We help the community recover lost items and reunite found belongings with their rightful owners.</p>
+        <div class="card-icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>We help the community recover lost items and reunite found belongings with their rightful owners through a trusted, user-friendly platform.</p>
       </div>
       <div class="about-card">
-        <h3>🔐 Secure & Safe</h3>
-        <p>Your personal information is protected. Contact details are only shared when both parties agree.</p>
+        <div class="card-icon">🔐</div>
+        <h3>Secure & Safe</h3>
+        <p>Your personal information is protected. Direct contact is only made when both parties agree to share contact details.</p>
       </div>
       <div class="about-card">
-        <h3>💙 Community Driven</h3>
-        <p>Every report helps someone. Join us in making our community more helpful and connected.</p>
+        <div class="card-icon">💙</div>
+        <h3>Community Driven</h3>
+        <p>Every report helps someone. Join us in making our community more helpful, connected, and caring about each other's belongings.</p>
+      </div>
+      <div class="about-card">
+        <div class="card-icon">🚀</div>
+        <h3>Smart Technology</h3>
+        <p>Our AI assistant helps you navigate the platform, provides recovery tips, and ensures you have the best experience possible.</p>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
-    <p>&copy; 2026 Lost & Found Platform. Made with ❤️ for the community.</p>
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <p>&copy; <span id="current-year"></span> Lost & Found Platform. Made with ❤️ for the community.</p>
+      <div class="footer-links">
+        <a href="#about" class="footer-link">About</a>
+        <a href="#report" class="footer-link">Report</a>
+        <a href="#items" class="footer-link">Browse</a>
+      </div>
+    </div>
   </footer>
+
+  <!-- Screen reader only content -->
+  <div class="sr-only" id="sr-status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="script.js"></script>
 </body>

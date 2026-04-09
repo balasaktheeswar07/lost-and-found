@@ -1,437 +1,123 @@
-// ===== DATA MANAGEMENT =====
-const STORAGE_KEY = 'lostFoundItems';
+const lostBtn = document.getElementById("lost-btn");
+const foundBtn = document.getElementById("found-btn");
 
-// Sample initial items
-const sampleItems = [
-  {
-    id: 1,
-    type: 'lost',
-    category: 'wallet',
-    name: 'Black Leather Wallet',
-    description: 'Contains ID and credit cards. Very important.',
-    location: 'Library 3rd Floor',
-    date: '2026-04-07',
-    contact: '555-0101',
-    createdAt: new Date().getTime()
-  },
-  {
-    id: 2,
-    type: 'found',
-    category: 'phone',
-    name: 'Silver iPhone 15',
-    description: 'Found with cracked screen protector',
-    location: 'Cafeteria',
-    date: '2026-04-06',
-    contact: '555-0102',
-    createdAt: new Date().getTime()
-  },
-  {
-    id: 3,
-    type: 'found',
-    category: 'id',
-    name: 'Student ID Card',
-    description: 'Name: John Smith, ID: 2024001',
-    location: 'Parking Area',
-    date: '2026-04-05',
-    contact: '555-0103',
-    createdAt: new Date().getTime()
-  }
-];
+const lostSound = document.getElementById("lost-sound");
+const foundSound = document.getElementById("found-sound");
 
-// Initialize storage
-function initializeStorage() {
-  const items = localStorage.getItem(STORAGE_KEY);
-  if (!items) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleItems));
-  }
-}
+// optional volume control
+lostSound.volume = 0.35;
+foundSound.volume = 0.35;
 
-function getItems() {
-  const items = localStorage.getItem(STORAGE_KEY);
-  return items ? JSON.parse(items) : [];
-}
+lostBtn.addEventListener("click", () => {
+  lostSound.currentTime = 0;
+  lostSound.play();
 
-function saveItems(items) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
-// ===== DOM ELEMENTS =====
-const reportBtn = document.getElementById('report-btn');
-const reportModal = document.getElementById('report-modal');
-const closeModal = document.querySelector('.close-modal');
-const reportForm = document.getElementById('report-form');
-const itemsContainer = document.getElementById('items-container');
-const searchInput = document.getElementById('search-input');
-const filterButtons = document.querySelectorAll('.filter-btn');
-const noItems = document.getElementById('no-items');
-const notification = document.getElementById('notification');
-
-const chatToggle = document.getElementById('chat-toggle');
-const chatContainer = document.getElementById('chat-container');
-const closeChat = document.getElementById('close-chat');
-const chatBody = document.getElementById('chat-body');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-
-// ===== MODAL FUNCTIONALITY =====
-reportBtn.addEventListener('click', () => {
-  reportModal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+  alert("Lost item report page will open here.");
 });
 
-closeModal.addEventListener('click', () => {
-  reportModal.classList.add('hidden');
-  document.body.style.overflow = 'auto';
+foundBtn.addEventListener("click", () => {
+  foundSound.currentTime = 0;
+  foundSound.play();
+
+  alert("Found item report page will open here.");
+});
+const chatToggle = document.getElementById("chat-toggle");
+const chatContainer = document.getElementById("chat-container");
+const closeChat = document.getElementById("close-chat");
+const sendBtn = document.getElementById("send-btn");
+const userInput = document.getElementById("user-input");
+const chatBody = document.getElementById("chat-body");
+
+const API_KEY = "YOUR_GEMINI_API_KEY";
+
+chatToggle.addEventListener("click", () => {
+  chatContainer.classList.toggle("hidden");
 });
 
-reportModal.addEventListener('click', (e) => {
-  if (e.target === reportModal) {
-    reportModal.classList.add('hidden');
-    document.body.style.overflow = 'auto';
-  }
+closeChat.addEventListener("click", () => {
+  chatContainer.classList.add("hidden");
 });
 
-// ===== FORM HANDLING =====
-reportForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const newItem = {
-    id: Date.now(),
-    type: document.getElementById('item-type').value,
-    category: document.getElementById('item-category').value,
-    name: document.getElementById('item-name').value,
-    description: document.getElementById('item-description').value,
-    location: document.getElementById('item-location').value,
-    date: document.getElementById('item-date').value,
-    contact: document.getElementById('item-contact').value,
-    createdAt: new Date().getTime()
-  };
-
-  const items = getItems();
-  items.unshift(newItem);
-  saveItems(items);
-
-  // Show notification
-  showNotification('✅ Item reported successfully!', 'success');
-
-  // Reset form and close modal
-  reportForm.reset();
-  reportModal.classList.add('hidden');
-  document.body.style.overflow = 'auto';
-
-  // Refresh items display
-  displayItems(items);
-  updateMusicOnItemsChange();
-});
-
-// ===== DISPLAY ITEMS =====
-function displayItems(itemsToDisplay) {
-  itemsContainer.innerHTML = '';
-
-  if (itemsToDisplay.length === 0) {
-    noItems.style.display = 'block';
-    return;
-  }
-
-  noItems.style.display = 'none';
-
-  itemsToDisplay.forEach((item) => {
-    const card = createCard(item);
-    itemsContainer.appendChild(card);
-  });
-}
-
-function createCard(item) {
-  const card = document.createElement('div');
-  card.className = 'card';
-  
-  const dateObj = new Date(item.date);
-  const formattedDate = dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-
-  const badge = `<span class="badge ${item.type}">${item.type.toUpperCase()}</span>`;
-  
-  card.innerHTML = `
-    ${badge}
-    <h3>${escapeHtml(item.name)}</h3>
-    <p><strong>Category:</strong> ${item.category}</p>
-    <p><strong>Description:</strong> ${escapeHtml(item.description)}</p>
-    <div class="card-meta">
-      <span class="card-location">📍 ${escapeHtml(item.location)}</span>
-      <span class="card-date">📅 ${formattedDate}</span>
-    </div>
-    <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-      <strong>Contact:</strong> ${escapeHtml(item.contact)}
-    </p>
-  `;
-
-  card.addEventListener('click', () => {
-    showNotification(`📱 Contact: ${item.contact}`, 'success');
-  });
-
-  return card;
-}
-
-// ===== SEARCH & FILTER =====
-let currentFilter = 'all';
-
-filterButtons.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    filterButtons.forEach((b) => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    applyFilters();
-  });
-});
-
-searchInput.addEventListener('input', applyFilters);
-
-function applyFilters() {
-  const items = getItems();
-  let filtered = items;
-
-  // Apply type filter
-  if (currentFilter !== 'all') {
-    filtered = filtered.filter((item) => item.type === currentFilter);
-  }
-
-  // Apply search filter
-  const searchTerm = searchInput.value.toLowerCase();
-  if (searchTerm) {
-    filtered = filtered.filter((item) => {
-      return (
-        item.name.toLowerCase().includes(searchTerm) ||
-        item.location.toLowerCase().includes(searchTerm) ||
-        item.description.toLowerCase().includes(searchTerm)
-      );
-    });
-  }
-
-  displayItems(filtered);
-  updateMusicOnItemsChange();
-}
-
-// ===== CHATBOT FUNCTIONALITY =====
-chatToggle.addEventListener('click', () => {
-  chatContainer.classList.toggle('hidden');
-  if (!chatContainer.classList.contains('hidden')) {
-    userInput.focus();
-  }
-});
-
-closeChat.addEventListener('click', () => {
-  chatContainer.classList.add('hidden');
-});
-
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
+sendBtn.addEventListener("click", sendMessage);
+userInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
     sendMessage();
   }
 });
 
-function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message) return;
-
-  // Add user message
-  addChatMessage(message, 'user');
-  userInput.value = '';
-
-  // Show typing indicator
-  addChatMessage('...', 'bot', true);
-
-  // Simulate bot response delay
-  setTimeout(() => {
-    removeLastChatMessage();
-    const response = generateBotResponse(message);
-    addChatMessage(response, 'bot');
-  }, 600);
-}
-
-function addChatMessage(text, sender, isTyping = false) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
-  
-  if (isTyping) {
-    messageDiv.classList.add('typing');
-  }
-  
+function addMessage(text, sender) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add(sender === "user" ? "user-message" : "bot-message");
   messageDiv.textContent = text;
   chatBody.appendChild(messageDiv);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function removeLastChatMessage() {
-  const lastMessage = chatBody.lastChild;
-  if (lastMessage) {
-    lastMessage.remove();
-  }
+function addTyping() {
+  const typingDiv = document.createElement("div");
+  typingDiv.classList.add("typing");
+  typingDiv.id = "typing-indicator";
+  typingDiv.textContent = "AI is typing...";
+  chatBody.appendChild(typingDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function generateBotResponse(userMessage) {
-  const msg = userMessage.toLowerCase();
-
-  // Check for common keywords
-  if (msg.includes('report') || msg.includes('lost') || msg.includes('found')) {
-    return '📝 To report an item, click "Start Reporting" button in the hero section and fill out the form with details like location, date, and description.';
-  }
-
-  if (msg.includes('search') || msg.includes('find')) {
-    return '🔍 Scroll down to the "Browse Items" section where you can search by item name or location, and filter by "Lost" or "Found" items.';
-  }
-
-  if (msg.includes('category') || msg.includes('type')) {
-    return '📂 We support various categories: Wallet, Phone, Keys, ID/Document, Bag, Clothing, Accessory, and Other items.';
-  }
-
-  if (msg.includes('contact') || msg.includes('call') || msg.includes('phone')) {
-    return '📞 When you find an item you\'re looking for, click on the item card to see the contact information of who reported it.';
-  }
-
-  if (msg.includes('safe') || msg.includes('privacy') || msg.includes('secure')) {
-    return '🔐 Your personal information is handled securely. Direct contact is only made when you interact with specific items.';
-  }
-
-  if (msg.includes('how') && msg.includes('work')) {
-    return '⚙️ How it works:\n1. Report a lost or found item\n2. Provide details (location, date, contact)\n3. Browse other reports\n4. Contact someone if you find a match\n5. Reunite belongings!';
-  }
-
-  if (msg.includes('thank') || msg.includes('thanks')) {
-    return '😊 You\'re welcome! We\'re happy to help reunite people with their lost items!';
-  }
-
-  if (msg.includes('hi') || msg.includes('hello') || msg.includes('hey')) {
-    return '👋 Hello! I\'m here to help. You can ask me about reporting items, searching, or how the platform works.';
-  }
-
-  // Default response
-  return '💡 I can help with reporting items, searching for lost/found belongings, or answering questions about the platform. What would you like to know?';
+function removeTyping() {
+  const typing = document.getElementById("typing-indicator");
+  if (typing) typing.remove();
 }
 
-// ===== NOTIFICATIONS =====
-function showNotification(message, type = 'success') {
-  notification.textContent = message;
-  notification.className = `notification ${type}`;
-  notification.classList.remove('hidden');
+async function sendMessage() {
+  const message = userInput.value.trim();
+  if (!message) return;
 
-  setTimeout(() => {
-    notification.classList.add('hidden');
-  }, 3000);
-}
+  addMessage(message, "user");
+  userInput.value = "";
+  addTyping();
 
-// ===== UTILITY FUNCTIONS =====
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+  try {
+    const prompt = `
+You are an AI assistant for a Lost and Found website.
 
-// ===== MUSIC CONTROLS =====
-const pleasantBgm = document.getElementById('pleasant-bgm');
-const sadBgm = document.getElementById('sad-bgm');
-const musicControls = document.getElementById('music-controls');
-const playMusicBtn = document.getElementById('play-music');
-const pauseMusicBtn = document.getElementById('pause-music');
-const currentMusicType = document.getElementById('current-music-type');
+Your job:
+- Help users report lost items
+- Help users report found items
+- Help users search for missing belongings
+- Explain how to claim an item
+- Be short, helpful, and student-friendly
+- If item is important like ID card, wallet, keys, documents, tell them to also contact admin/security
 
-let currentMusic = null;
-let isMusicPlaying = false;
+User message: ${message}
+    `;
 
-// Initialize music controls
-function initializeMusic() {
-  // Show music controls when there are items
-  const items = getItems();
-  if (items.length > 0) {
-    musicControls.classList.remove('hidden');
-    updateMusicBasedOnItems(items);
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: prompt }]
+            }
+          ]
+        })
+      }
+    );
+
+    const data = await response.json();
+    removeTyping();
+
+    const botReply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Sorry, I couldn't understand that. Please try again.";
+
+    addMessage(botReply, "bot");
+  } catch (error) {
+    removeTyping();
+    addMessage("Error connecting to Gemini AI. Check your API key or internet.", "bot");
+    console.error(error);
   }
 }
-
-// Update music based on item types
-function updateMusicBasedOnItems(items) {
-  const lostCount = items.filter(item => item.type === 'lost').length;
-  const foundCount = items.filter(item => item.type === 'found').length;
-
-  // Determine which music to play based on dominant item type
-  if (foundCount > lostCount) {
-    // More found items - play pleasant music
-    switchToMusic('pleasant', '🎵 Pleasant Music (Found Items)');
-  } else if (lostCount > foundCount) {
-    // More lost items - play sad music
-    switchToMusic('sad', '🎵 Reflective Music (Lost Items)');
-  } else if (foundCount > 0 || lostCount > 0) {
-    // Equal or mixed - play pleasant for hope
-    switchToMusic('pleasant', '🎵 Hopeful Music (Mixed Items)');
-  }
-}
-
-function switchToMusic(type, displayText) {
-  // Stop current music
-  if (currentMusic) {
-    currentMusic.pause();
-    currentMusic.currentTime = 0;
-  }
-
-  // Set new music
-  if (type === 'pleasant') {
-    currentMusic = pleasantBgm;
-  } else if (type === 'sad') {
-    currentMusic = sadBgm;
-  }
-
-  currentMusicType.textContent = displayText;
-
-  // Auto-play if music was previously playing
-  if (isMusicPlaying) {
-    playMusic();
-  }
-}
-
-function playMusic() {
-  if (currentMusic) {
-    currentMusic.play().then(() => {
-      isMusicPlaying = true;
-      playMusicBtn.classList.add('hidden');
-      pauseMusicBtn.classList.remove('hidden');
-    }).catch(error => {
-      console.log('Auto-play prevented by browser:', error);
-      showNotification('Click "Play Music" to start background music', 'info');
-    });
-  }
-}
-
-function pauseMusic() {
-  if (currentMusic) {
-    currentMusic.pause();
-    isMusicPlaying = false;
-    playMusicBtn.classList.remove('hidden');
-    pauseMusicBtn.classList.add('hidden');
-  }
-}
-
-// Event listeners for music controls
-playMusicBtn.addEventListener('click', playMusic);
-pauseMusicBtn.addEventListener('click', pauseMusic);
-
-// Update music when items change
-function updateMusicOnItemsChange() {
-  const items = getItems();
-  if (items.length > 0) {
-    musicControls.classList.remove('hidden');
-    updateMusicBasedOnItems(items);
-  } else {
-    musicControls.classList.add('hidden');
-    pauseMusic();
-  }
-}
-
-// ===== INITIALIZATION =====
-document.addEventListener('DOMContentLoaded', () => {
-  initializeStorage();
-  displayItems(getItems());
-  initializeMusic();
-});
